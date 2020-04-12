@@ -12,7 +12,6 @@ Functions for examining the kinematics of Orion clusters
 
 def load_data(filenames):
     """ Return list of dataframes to be worked with
-
     Parameters
     ----------
     filenames : tuple
@@ -29,7 +28,6 @@ def load_data(filenames):
 
 def with_rv_only(df):
     """ Return data that only contains rows with radial velocities
-
     Parameters
     ----------
     df : Pandas DataFrame
@@ -39,14 +37,12 @@ def with_rv_only(df):
 def combine_chen_cam(filename_chen,filename_cam):
     """ Merges data frames to contain a complete sample of radial
     velocities from gaia dr2 and apogee
-    
     Parameters
     ----------
     filename_chen : string
         Filename of SNN output
     filename_cam : string
         Filename of my apogee data with vhelio
-    
     Returns
     -------
     pd.DataFrame
@@ -63,14 +59,12 @@ def combine_chen_cam(filename_chen,filename_cam):
 
 def grouping_ICRS(df, group_select):
     """ Puts data sample into ICRS equitorial frame based on chosen stellar group
-    
     Parameters
     ----------
     df : pd.DataFrame
         Complete sample of data
     group_select : list
         List of group label numbers to include for analysis
-    
     Returns
     -------
     ICRS
@@ -109,12 +103,10 @@ by subtracting off LSR and average motion of group. Method used in Kounkel et al
 def rf_cartesian(input_coord_sys):
     """ Convert to reference frame of stellar group after subtracting of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
     defined in Schönrich et al. (2010) and leaves it in cartesian coordinates.
-    
     Parameters
     ----------
     input_coord_sys : ICRS
         ICRS input of group for analysis
-    
     Returns
     -------
     ICRS
@@ -138,12 +130,10 @@ def rf_cartesian(input_coord_sys):
 def rf_equitorial(input_coord_sys):
     """ Convert to reference frame of stellar group after subtracting of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
     defined in Schönrich et al. (2010) and converts it back to equitorial coordinates. 
-    
     Parameters
     ----------
     input_coord_sys : ICRS
         ICRS input of group for analysis
-    
     Returns
     -------
     ICRS
