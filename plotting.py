@@ -4,9 +4,13 @@ from astropy.coordinates import (CartesianRepresentation,CartesianDifferential,S
 from astropy.coordinates import ICRS, Galactic, GalacticLSR, Galactocentric
 
 def cartesian_3d(cf):
-    '''
-    Plots 3d cartesian coordinate frame
-    '''
+    """ Plots 3d vector velocities in cartesian coordinates 
+    
+    Parameters
+    ----------
+    cf : ICRS 
+        ICRS coordinate frame representation in cartesian coordinates
+    """
     assert cf.representation_type == CartesianRepresentation
     assert cf.differential_type == CartesianDifferential
     x = cf.x.value
@@ -26,9 +30,14 @@ def cartesian_3d(cf):
     plt.show()
 
 def equitorial_3d(cf):
-    '''
-    Plots 3d equitorial coordinate frame
-    '''
+    """ Plots 3d vector velocities in equitorial coordinates. Arrow heads aren't
+    showing up for some reason
+    
+    Parameters
+    ----------
+    cf : ICRS 
+        ICRS coordinate frame representation in equitorial coordinates 
+    """    
     #assert cf.representation_type == SphericalRepresentation
     #assert cf.differential_type == SphericalDifferential
 
@@ -49,9 +58,13 @@ def equitorial_3d(cf):
     plt.show() 
 
 def equitorial_2d(cf):
-    '''
-    Plots 2d equitorial
-    '''
+    """ Plots 2d vector velocities in equitorial coordinates. 
+    
+    Parameters
+    ----------
+    cf : ICRS 
+        ICRS coordinate frame representation in equitorial coordinates 
+    """    
     #assert cf.representation_type == SphericalRepresentation
     #assert cf.differential_type == SphericalDifferential
 
