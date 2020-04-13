@@ -34,7 +34,7 @@ def with_rv_only(df):
     """    
     return df.loc[df.radial_velocity.notnull() | df.vhelio.notnull()]
 
-def combine_chen_cam(filename_chen,filename_cam, radial_velocity_only=True):
+def combine_chen_cam(filename_chen,filename_cam, radial_velocity_only=False):
     """ Merges data frames to contain a complete sample of radial
     velocities from gaia dr2 and apogee
     Parameters
@@ -58,7 +58,7 @@ def combine_chen_cam(filename_chen,filename_cam, radial_velocity_only=True):
         df_complete = with_rv_only(df_complete)
     return df_complete
 
-def grouping_ICRS(df, group_select):
+def grouping_ICRS(df, group_select,ra_dec_region=None):
     """ Puts data sample into ICRS equitorial frame based on chosen stellar group
     Parameters
     ----------
@@ -70,10 +70,14 @@ def grouping_ICRS(df, group_select):
     -------
     ICRS
         ICRS coordinate frame
-    """    
+    """
+    
     df_group = df[df['label'].isin(group_select)]
     df_group = with_rv_only(df_group)
-  
+    if ra_dec_region != None:
+        ra_select = ra_dec_region[0]
+        dec_select = ra_dec_region[1]
+        df_group = df_group.loc[(df_group.ra > ra_select[0]) & (df_group.ra < ra_select[1]) & (df_group.dec > dec_select[0]) & (df_group.dec < dec_select[1])]
     rv_apogee = (df_group.vhelio.dropna()).values 
     x_apogee = df_group.loc[df_group.vhelio.notnull()].ra.values
     y_apogee = df_group.loc[df_group.vhelio.notnull()].dec.values
@@ -94,7 +98,7 @@ def grouping_ICRS(df, group_select):
     z = np.concatenate((z_apogee,z_gaia))
     dx = np.concatenate((dx_apogee,dx_gaia))
     dy = np.concatenate((dy_apogee,dy_gaia))
-
+        
     return ICRS(ra = x*u.deg, dec = y*u.deg, distance =z*u.parsec, pm_ra_cosdec = dx*(u.mas/u.yr), pm_dec = dy*(u.mas/u.yr), radial_velocity=rv*(u.km/u.s))
 
 '''
@@ -102,8 +106,8 @@ Next two functions return a coordinate frame (cartesian and equitorial) in a ste
 by subtracting off LSR and average motion of group. Method used in Kounkel et al. (2018)
 '''
 def rf_cartesian(input_coord_sys):
-    """ Convert to reference frame of stellar group after subtracting of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
-    defined in Schönrich et al. (2010) and leaves it in cartesian coordinates.
+    """ Convert to reference frame of stellar group after subtraction of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
+    defined in Schönrich et al. (2010) and leave it in cartesian coordinates.
     Parameters
     ----------
     input_coord_sys : ICRS
@@ -129,8 +133,8 @@ def rf_cartesian(input_coord_sys):
     return cartesian_representation
 
 def rf_equitorial(input_coord_sys):
-    """ Convert to reference frame of stellar group after subtracting of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
-    defined in Schönrich et al. (2010) and converts it back to equitorial coordinates. 
+    """ Convert to reference frame of stellar group after subtraction of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
+    defined in Schönrich et al. (2010) and convert it back to equitorial coordinates. 
     Parameters
     ----------
     input_coord_sys : ICRS

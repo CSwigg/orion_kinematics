@@ -23,7 +23,7 @@ def cartesian_3d(cf):
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
-    ax.quiver(x,y,z,v_x,v_y,v_z,normalize=True,length=10,linewidth=.5)
+    ax.quiver(x,y,z,v_x,v_y,v_z,normalize=True,length=10,linewidth=1,color='black')
     ax.set_xlabel('x (pc)')
     ax.set_ylabel('y (pc)')
     ax.set_zlabel('z (pc)')
@@ -51,7 +51,7 @@ def equitorial_3d(cf):
 
     fig = plt.figure()
     ax = fig.add_subplot(projection = '3d')
-    ax.quiver(ra,dec,d,pmra,pmdec,rv,normalize=True)
+    ax.quiver(ra,dec,d,pmra,pmdec,rv,normalize=True,color='black',linewidth=1)
     ax.set_xlabel('ra (deg)')
     ax.set_ylabel('dec (deg)')
     ax.set_zlabel('Distance (deg)')
@@ -76,7 +76,7 @@ def equitorial_2d(cf):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.quiver(ra,dec,-pmra,pmdec,color='blue')
+    ax.quiver(ra,dec,-pmra,pmdec,color='black')
     ax.set_xlabel('ra (deg)')
     ax.set_ylabel('dec (deg)')
     plt.gca().invert_xaxis()
