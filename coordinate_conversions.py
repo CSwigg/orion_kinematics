@@ -34,7 +34,7 @@ def with_rv_only(df):
     """    
     return df.loc[df.radial_velocity.notnull() | df.vhelio.notnull()]
 
-def combine_chen_cam(filename_chen,filename_cam):
+def combine_chen_cam(filename_chen,filename_cam, radial_velocity_only=True):
     """ Merges data frames to contain a complete sample of radial
     velocities from gaia dr2 and apogee
     Parameters
@@ -54,7 +54,8 @@ def combine_chen_cam(filename_chen,filename_cam):
     df_cam = chen_cam_data[1] 
     df_cam = df_cam.drop_duplicates(['gaia_source_id']) # some apogee data have duplicate measurements
     df_complete = pd.merge(df_chen, df_cam, how='left', left_on='source_id', right_on='gaia_source_id') 
-    df_complete = with_rv_only(df_complete)
+    if radial_velocity_only == True:
+        df_complete = with_rv_only(df_complete)
     return df_complete
 
 def grouping_ICRS(df, group_select):
@@ -73,7 +74,7 @@ def grouping_ICRS(df, group_select):
     df_group = df[df['label'].isin(group_select)]
     df_group = with_rv_only(df_group)
   
-    rv_apogee = (df_group.vhelio.dropna()).values
+    rv_apogee = (df_group.vhelio.dropna()).values 
     x_apogee = df_group.loc[df_group.vhelio.notnull()].ra.values
     y_apogee = df_group.loc[df_group.vhelio.notnull()].dec.values
     dx_apogee = df_group.loc[df_group.vhelio.notnull()].pmra.values
