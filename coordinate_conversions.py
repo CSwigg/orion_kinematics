@@ -105,47 +105,63 @@ def grouping_ICRS(df, group_select,ra_dec_region=None):
 Next two functions return a coordinate frame (cartesian and equitorial) in a stellar group's reference frame 
 by subtracting off LSR and average motion of group. Method used in Kounkel et al. (2018)
 '''
-def rf_cartesian(input_coord_sys):
+def rf_cartesian(input_coord_sys, average_velocity = None):
     """ Convert to reference frame of stellar group after subtraction of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
     defined in Schönrich et al. (2010) and leave it in cartesian coordinates.
     Parameters
     ----------
     input_coord_sys : ICRS
         ICRS input of group for analysis
+    average_velocity : tuple
+        average cartesian velocity to be subtracted if known,
+        else computes it here
     Returns
     -------
     ICRS
         ICRS frame
     """
-    galactic = input_coord_sys.transform_to(GalacticLSR) # This conversion implicitly subtracts of the LSR
+    galactic = input_coord_sys.transform_to(GalacticLSR) # This conversion implicitly subtracts off the LSR
     galactic.representation_type = 'cartesian'
     galactic.differential_type = 'cartesian'
 
     x_new = galactic.cartesian.x
     y_new = galactic.cartesian.y
     z_new = galactic.cartesian.z
-
-    dx_new = (galactic.velocity.d_x.value - np.median(galactic.velocity.d_x.value))*(u.km/u.s)
-    dy_new = (galactic.velocity.d_y.value - np.median(galactic.velocity.d_y.value))*(u.km/u.s)
-    dz_new = (galactic.velocity.d_z.value - np.median(galactic.velocity.d_z.value))*(u.km/u.s)
+    
+    if average_velocity == None:
+        dx_median = np.median(galactic.velocity.d_x.value)
+        dy_median = np.median(galactic.velocity.d_y.value)
+        dz_median = np.median(galactic.velocity.d_z.value)
+        print('median(dx) = {} km/s, median(dy) = {} km/s, median(dz) = {} km/s'.format(dx_median, dy_median, dz_median))
+    else:
+        dx_median = average_velocity[0]
+        dy_median = average_velocity[1]
+        dz_median = average_velocity[2]
+        
+    dx_new = (galactic.velocity.d_x.value - dx_median)*(u.km/u.s)
+    dy_new = (galactic.velocity.d_y.value - dy_median)*(u.km/u.s)
+    dz_new = (galactic.velocity.d_z.value - dz_median)*(u.km/u.s)
     
     cartesian_representation = ICRS(x_new, y_new, z_new, dx_new, dy_new, dz_new, representation_type = CartesianRepresentation, differential_type = CartesianDifferential)
     return cartesian_representation
 
-def rf_equitorial(input_coord_sys):
+def rf_equitorial(input_coord_sys, average_velocities=None):
     """ Convert to reference frame of stellar group after subtraction of LSR (U,V,W) = (11.1,12.24,7.25) kms^-1
     defined in Schönrich et al. (2010) and convert it back to equitorial coordinates. 
     Parameters
     ----------
     input_coord_sys : ICRS
         ICRS input of group for analysis
+    average_velocity : tuple
+        average cartesian velocity to be subtracted if known,
+        else computes it here
     Returns
     -------
     ICRS
         ICRS frame
     """    
 
-    cartesian_representation = rf_cartesian(input_coord_sys)
+    cartesian_representation = rf_cartesian(input_coord_sys,average_velocities=None)
     revert = cartesian_representation.transform_to(ICRS)
     crep = revert
     revert.representation_type = 'spherical'
